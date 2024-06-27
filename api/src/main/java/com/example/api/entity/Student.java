@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Estudante {
+public class Student {
 
     private Long id;
-    private String nome;
+    private String name;
     private String email;
-    private LocalDate dataNascimento;
+    private LocalDate birthDate;
 
 }
