@@ -1,63 +1,56 @@
 package com.example.api.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.api.entity.Student;
+import com.example.api.repository.StudentRepository;
+
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class StudentService {
 
-    private static Map<Long, Student> studentList = new HashMap<>();
+    private StudentRepository studentRepository;
 
     public ResponseEntity<Student> getStudentById(Long id) {
-        Student student = studentList.get(id);
-
-        if (student == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        if (studentRepository.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.OK).body(studentRepository.findById(id).get());
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(student);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
     public List<Student> getAllStudents() {
-        return new ArrayList<>(studentList.values());
+        return studentRepository.findAll();
     }
 
     public ResponseEntity<Student> createStudent(Student student) {
-        studentList.put(student.getId(), student);
+        Student salvedStudent = studentRepository.save(student);
 
-        return ResponseEntity.status(HttpStatus.OK).body(student);
+        return ResponseEntity.status(HttpStatus.CREATED).body(salvedStudent);
     }
 
-    public ResponseEntity<Student> updateStudent(Student student) {
-        Student studentFounded = studentList.get(student.getId());
-
-        if (studentFounded == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    public ResponseEntity<Student> updateStudent(Long id, Student student) {
+        if (studentRepository.existsById(id)) {
+            Student salvedStudent = studentRepository.save(student);
+            return ResponseEntity.status(HttpStatus.OK).body(salvedStudent);
         }
 
-        studentList.put(student.getId(), student);
-
-        return ResponseEntity.status(HttpStatus.OK).body(student);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
     public ResponseEntity<String> deleteStudent(Long id) {
-        Student studentFounded = studentList.get(id);
-
-        if (studentFounded == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        if (studentRepository.existsById(id)) {
+            studentRepository.deleteById(id);
+            return ResponseEntity.status(HttpStatus.OK).body("Student deleted successfully!");
         }
-
-        studentList.remove(id);
-
-        return ResponseEntity.status(HttpStatus.OK).body("Student deleted successfully!");
+        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Student not found");
     }
 
 }
