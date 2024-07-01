@@ -1,12 +1,17 @@
 package com.example.api.service;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.example.api.entity.Book;
 import com.example.api.entity.Student;
+import com.example.api.repository.BookRepository;
 import com.example.api.repository.StudentRepository;
 
 import lombok.AllArgsConstructor;
@@ -16,6 +21,7 @@ import lombok.AllArgsConstructor;
 public class StudentService {
 
     private StudentRepository studentRepository;
+    private BookRepository bookRepository;
 
     public ResponseEntity<Student> getStudentById(Long id) {
         if (studentRepository.existsById(id)) {
@@ -30,7 +36,15 @@ public class StudentService {
     }
 
     public ResponseEntity<Student> createStudent(Student student) {
+        Set<Book> books = student.getBooks();
+        student.setBooks(new HashSet<>());
+
         Student salvedStudent = studentRepository.save(student);
+
+        for (Book book : books) {
+            book.setStudent(Student.builder().id(student.getId()).build());
+            student.getBooks().add(bookRepository.save(book));
+        }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(salvedStudent);
     }
