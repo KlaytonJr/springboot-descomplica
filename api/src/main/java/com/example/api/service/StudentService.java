@@ -52,6 +52,9 @@ public class StudentService {
     public ResponseEntity<Student> updateStudent(Long id, Student student) {
         if (studentRepository.existsById(id)) {
             student.setId(id);
+            for (Book book : student.getBooks()) {
+                book.setStudent(student);
+            }
             Student salvedStudent = studentRepository.save(student);
             return ResponseEntity.status(HttpStatus.OK).body(salvedStudent);
         }

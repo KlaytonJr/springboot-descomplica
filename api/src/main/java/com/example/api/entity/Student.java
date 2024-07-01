@@ -1,6 +1,7 @@
 package com.example.api.entity;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -13,10 +14,12 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -35,5 +38,5 @@ public class Student {
     private Address address;
 
     @OneToMany(mappedBy="student", cascade=CascadeType.ALL, orphanRemoval=true)
-    private Set<Book> books;
+    private Set<Book> books = new HashSet<>();
 }
