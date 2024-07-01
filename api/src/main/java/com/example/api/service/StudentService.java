@@ -37,6 +37,7 @@ public class StudentService {
 
     public ResponseEntity<Student> updateStudent(Long id, Student student) {
         if (studentRepository.existsById(id)) {
+            student.setId(id);
             Student salvedStudent = studentRepository.save(student);
             return ResponseEntity.status(HttpStatus.OK).body(salvedStudent);
         }
