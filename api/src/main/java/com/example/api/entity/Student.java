@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,4 +41,8 @@ public class Student {
 
     @OneToMany(mappedBy="student", cascade=CascadeType.ALL, orphanRemoval=true)
     private Set<Book> books = new HashSet<>();
+
+    @OneToMany(mappedBy="student")
+    @JsonIgnore
+    private Set<CourseEvaluation> courseEvaluations;
 }
